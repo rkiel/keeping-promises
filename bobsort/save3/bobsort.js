@@ -44,25 +44,27 @@ function writeFileCallback(writeFileData) {
   return writeFileData;
 }
 
-function save(array, saveCallback) {
-  const promise = fs.writeFile("saved.txt", array);
-  const promise2 = promise.then(writeFileCallback);
-
-  if (saveCallback) {
-    const callbackWithArray = saveCallback(array);
-    const promise3 = promise2.then(callbackWithArray);
-    return promise3;
-  } else {
-    return promise2;
-  }
-}
-
-function outputCallback(array) {
+function saveCallback(array) {
   function callback(data) {
-    return output(array);
+    return array;
   }
 
   return callback;
+}
+
+function save(array) {
+  const promise = fs.writeFile("saved.txt", array);
+  const promise2 = promise.then(writeFileCallback);
+
+  const callbackWithArray = saveCallback(array);
+  const promise3 = promise2.then(callbackWithArray);
+
+  return promise3;
+}
+
+function outputCallback(array) {
+  output(array);
+  return array;
 }
 
 const initialArgs = getCommandLineArgs();
@@ -70,4 +72,5 @@ const missingNode = removeFirst(initialArgs);
 const missingScript = removeFirst(missingNode);
 const uniqueArray = unique(missingScript);
 const sortedArray = sort(uniqueArray);
-const promise = save(sortedArray, outputCallback);
+const promise = save(sortedArray);
+const promise2 = promise.then(outputCallback);
