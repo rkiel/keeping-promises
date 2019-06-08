@@ -1,19 +1,24 @@
-// 6
+//
+// node step06.js one two three
+//
 
 const fs = require("fs");
+
+function handleError(e) {
+  console.error(e);
+}
 
 function getCommandLineArgs() {
   return process.argv;
 }
 
 function removeFirst(array) {
-  array.shift();
+  const firstItem = array.shift();
   return array;
 }
 
 function outputItem(item) {
   console.log(item);
-  return item;
 }
 
 function output(array) {
@@ -52,11 +57,20 @@ function save(array) {
   return array;
 }
 
-const initialArgs = getCommandLineArgs();
-const missingNode = removeFirst(initialArgs);
-const missingScript = removeFirst(missingNode);
-const uniqueArray = unique(missingScript);
-const sortedArray = sort(uniqueArray);
-const savedArray = save(sortedArray);
+function justDoIt() {
+  try {
+    const initialArgs = getCommandLineArgs();
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const savedArray = save(sortedArray);
+    const outputArray = output(savedArray);
 
-output(savedArray);
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+
+justDoIt();
