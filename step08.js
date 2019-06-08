@@ -1,19 +1,24 @@
-// 8
+//
+// node step08.js one two three
+//
 
 const fs = require("fs").promises;
+
+function handleError(e) {
+  console.error(e);
+}
 
 function getCommandLineArgs() {
   return process.argv;
 }
 
 function removeFirst(array) {
-  array.shift();
+  const firstItem = array.shift();
   return array;
 }
 
 function outputItem(item) {
   console.log(item);
-  return item;
 }
 
 function output(array) {
@@ -37,27 +42,21 @@ function unique(array) {
   return array.reduce(uniqueReducer, []);
 }
 
-function writeFileCallback(writeFileData) {
-  console.log(writeFileData);
+function writeFileCallback(data) {
+  console.log(data);
   console.log("saved data");
   console.log();
-  return writeFileData;
-}
-
-function saveCallback(array) {
-  function callback(data) {
-    return array;
-  }
-
-  return callback;
+  return data;
 }
 
 function save(array) {
+  function saveCallback(data) {
+    return array;
+  }
+
   const promise = fs.writeFile("saved.txt", array);
   const promise2 = promise.then(writeFileCallback);
-
-  const callbackWithArray = saveCallback(array);
-  const promise3 = promise2.then(callbackWithArray);
+  const promise3 = promise2.then(saveCallback);
 
   return promise3;
 }
@@ -67,10 +66,20 @@ function outputCallback(array) {
   return array;
 }
 
-const initialArgs = getCommandLineArgs();
-const missingNode = removeFirst(initialArgs);
-const missingScript = removeFirst(missingNode);
-const uniqueArray = unique(missingScript);
-const sortedArray = sort(uniqueArray);
-const promise = save(sortedArray);
-const promise2 = promise.then(outputCallback);
+function justDoIt() {
+  try {
+    const initialArgs = getCommandLineArgs();
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const promise = save(sortedArray);
+    const promise2 = promise.then(outputCallback);
+
+    return promise2;
+  } catch (e) {
+    handleError(e);
+  }
+}
+
+justDoIt();
