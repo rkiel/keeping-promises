@@ -6,17 +6,17 @@ function handleError(e) {
   console.error(e);
 }
 
-function getCommandLineArgs() {
-  return process.argv;
+function getCommandLineArgs(processData) {
+  return processData.argv;
 }
 
-function justDoIt() {
+function justDoIt(processData) {
   try {
-    const initialArgs = getCommandLineArgs();
+    const initialArgs = getCommandLineArgs(processData);
     console.log(initialArgs);
   } catch (e) {
     handleError(e);
   }
 }
 
-justDoIt();
+justDoIt(process);

@@ -6,8 +6,8 @@ function handleError(e) {
   console.error(e);
 }
 
-function getCommandLineArgs() {
-  return process.argv;
+function getCommandLineArgs(processData) {
+  return processData.argv;
 }
 
 function removeFirst(array) {
@@ -40,9 +40,9 @@ function unique(array) {
   return array.reduce(uniqueReducer, []);
 }
 
-function justDoIt() {
+function justDoIt(processData) {
   try {
-    const initialArgs = getCommandLineArgs();
+    const initialArgs = getCommandLineArgs(processData);
     const missingNode = removeFirst(initialArgs);
     const missingScript = removeFirst(missingNode);
     const uniqueArray = unique(missingScript);
@@ -55,4 +55,4 @@ function justDoIt() {
   }
 }
 
-justDoIt();
+justDoIt(process);
