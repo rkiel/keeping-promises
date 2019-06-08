@@ -1,5 +1,5 @@
 //
-// node step04.js one two three
+// node step05.js one two three
 //
 
 function handleError(e) {
@@ -28,12 +28,25 @@ function sort(array) {
   return array.sort();
 }
 
+function uniqueReducer(accum, elem) {
+  if (accum.includes(elem)) {
+    return accum;
+  } else {
+    return accum.concat([elem]);
+  }
+}
+
+function unique(array) {
+  return array.reduce(uniqueReducer, []);
+}
+
 function justDoIt() {
   try {
     const initialArgs = getCommandLineArgs();
     const missingNode = removeFirst(initialArgs);
     const missingScript = removeFirst(missingNode);
-    const sortedArray = sort(missingScript);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
     const outputArray = output(sortedArray);
 
     return outputArray;
