@@ -1,5 +1,5 @@
 //
-// node step02.js one two three
+// node step03.js one two three
 //
 
 function handleError(e) {
@@ -15,12 +15,23 @@ function removeFirst(array) {
   return array;
 }
 
+function outputItem(item) {
+  console.log(item);
+}
+
+function output(array) {
+  array.forEach(outputItem);
+  return array;
+}
+
 function justDoIt() {
   try {
     const initialArgs = getCommandLineArgs();
     const missingNode = removeFirst(initialArgs);
     const missingScript = removeFirst(missingNode);
-    console.log(missingScript);
+    const outputArray = output(missingScript);
+
+    return outputArray;
   } catch (e) {
     handleError(e);
   }
