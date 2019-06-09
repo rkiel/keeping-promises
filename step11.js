@@ -1,19 +1,24 @@
-// 11
+//
+// node step08.js one two three
+//
 
 const fs = require("fs").promises;
 
-function getCommandLineArgs() {
-  return process.argv;
+function handleError(e) {
+  console.error(e);
+}
+
+function getCommandLineArgs(processData) {
+  return processData.argv;
 }
 
 function removeFirst(array) {
-  array.shift();
+  const firstItem = array.shift();
   return array;
 }
 
 function outputItem(item) {
   console.log(item);
-  return item;
 }
 
 function output(array) {
@@ -37,37 +42,33 @@ function unique(array) {
   return array.reduce(uniqueReducer, []);
 }
 
-function writeFileCallback(writeFileData) {
-  console.log(writeFileData);
+function writeFileCallback(data) {
+  console.log(data);
   console.log("saved data");
   console.log();
-  return writeFileData;
-}
-
-function saveCallback(array) {
-  function callback(data) {
-    return array;
-  }
-
-  return callback;
+  return data;
 }
 
 function save(array) {
-  const callbackWithArray = saveCallback(array);
+  function saveCallback(data) {
+    return array;
+  }
 
-  return fs
-    .writeFile("saved.txt", array)
-    .then(writeFileCallback)
-    .then(callbackWithArray);
+  const promise = fs.writeFile("saved.txt", array);
+  const promise2 = promise.then(writeFileCallback);
+  const promise3 = promise2.then(saveCallback);
+
+  return promise3;
+}
+
+function outputCallback(array) {
+  output(array);
+  return array;
 }
 
 function closing() {
   console.log();
   console.log("THE END");
-}
-
-function handleError(error) {
-  console.error(error);
 }
 
 function read() {
@@ -83,12 +84,18 @@ function stringToArray(data) {
   return data.split("\n");
 }
 
-const promise = read()
-  .then(convertToString)
-  .then(stringToArray)
-  .then(unique)
-  .then(sort)
-  .then(save)
-  .then(output)
-  .then(closing)
-  .catch(handleError);
+function justDoIt(processData) {
+  const promise = read()
+    .then(convertToString)
+    .then(stringToArray)
+    .then(unique)
+    .then(sort)
+    .then(save)
+    .then(output)
+    .then(closing)
+    .catch(handleError);
+
+  return promise;
+}
+
+justDoIt(process);
