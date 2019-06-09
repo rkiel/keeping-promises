@@ -1,19 +1,24 @@
-// 10
+//
+// node step08.js one two three
+//
 
 const fs = require("fs").promises;
 
-function getCommandLineArgs() {
-  return process.argv;
+function handleError(e) {
+  console.error(e);
+}
+
+function getCommandLineArgs(processData) {
+  return processData.argv;
 }
 
 function removeFirst(array) {
-  array.shift();
+  const firstItem = array.shift();
   return array;
 }
 
 function outputItem(item) {
   console.log(item);
-  return item;
 }
 
 function output(array) {
@@ -37,38 +42,33 @@ function unique(array) {
   return array.reduce(uniqueReducer, []);
 }
 
-function writeFileCallback(writeFileData) {
-  console.log(writeFileData);
+function writeFileCallback(data) {
+  console.log(data);
   console.log("saved data");
   console.log();
-  return writeFileData;
-}
-
-function saveCallback(array) {
-  function callback(data) {
-    return array;
-  }
-
-  return callback;
+  return data;
 }
 
 function save(array) {
+  function saveCallback(data) {
+    return array;
+  }
+
   const promise = fs.writeFile("saved.txt", array);
   const promise2 = promise.then(writeFileCallback);
-
-  const callbackWithArray = saveCallback(array);
-  const promise3 = promise2.then(callbackWithArray);
+  const promise3 = promise2.then(saveCallback);
 
   return promise3;
+}
+
+function outputCallback(array) {
+  output(array);
+  return array;
 }
 
 function closing() {
   console.log();
   console.log("THE END");
-}
-
-function handleError(error) {
-  console.error(error);
 }
 
 function read() {
@@ -84,12 +84,16 @@ function stringToArray(data) {
   return data.split("\n");
 }
 
-const promise = read();
-const promise2 = promise.then(convertToString);
-const promise3 = promise2.then(stringToArray);
-const promise4 = promise3.then(unique);
-const promise5 = promise4.then(sort);
-const promise6 = promise5.then(save);
-const promise7 = promise6.then(output);
-const promise8 = promise7.then(closing);
-const promise9 = promise8.catch(handleError);
+function justDoIt(processData) {
+  const promise = read();
+  const promise2 = promise.then(convertToString);
+  const promise3 = promise2.then(stringToArray);
+  const promise4 = promise3.then(unique);
+  const promise5 = promise4.then(sort);
+  const promise6 = promise5.then(save);
+  const promise7 = promise6.then(output);
+  const promise8 = promise7.then(closing);
+  const promise9 = promise8.catch(handleError);
+}
+
+justDoIt(process);
