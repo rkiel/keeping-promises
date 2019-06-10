@@ -107,7 +107,7 @@ we get something like this.
   'four' ]
 ```
 
-Looks like the command line arguments include the path to the `node` executable and the path to our source code file for `sort.js`. Our next task is to transform the array without the first element. We can write a function called `removeFirst` to do that transformation.
+Looks like the command line arguments include the path to the `node` executable and the path to our source code file for `sort.js`. Our next task is to transform the array into an array without the first element. We can write a function called `removeFirst` to do that transformation.
 
 ```JavaScript
 function removeFirst(array) {
@@ -129,4 +129,59 @@ function justDoIt(processData) {
     handleError(e);
   }
 }
+```
+
+We now have an array of words.
+
+## Output
+
+Even though our list of words is not in alphabetic order, we can still format the output so that each work appears on a separate line. Our next task does not need a transform but rather generate a side-effect. We can write a function called `output` to iterate over each array item.
+
+```JavaScript
+function output(array) {
+  array.forEach(outputItem);
+}
+```
+
+Here we see our first use of a callback function. We register the callback function `outputItem` by passing it as a parameter to the array function `forEach`. Behind the scenes, `forEach` will loop through the array, one item at a time, and invoke the callback function. Inside `outputItem`, we can print each item to the terminal.
+
+```JavaScript
+function outputItem(item) {
+  console.log(item);
+}
+```
+
+So far, we've had a nice, linear transformation of data from beginning to end. We can continue that by making `output` an identity function that returns its input parameter.
+
+```JavaScript
+function output(array) {
+  array.forEach(outputItem);
+  return array;
+}
+```
+
+Putting it all together,
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const outputArray = output(missingScript);
+
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+We now get the following output:
+
+```bash
+one
+two
+three
+four
 ```
