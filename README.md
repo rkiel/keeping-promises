@@ -297,11 +297,11 @@ This is a functional style of programming. This step-by-step approach should fee
 
 It is also a very synchronous style of programming. Since it is JavaScript, there is one execution thread and the execution of `justDoIt` runs super fast from start to finish. None of the functions have any execution roadblocks, such as blocking I/O, to slow it down.
 
-But what about `console.log`? Isn't that blocking I/O. Yes but let's ignore that for now.
+But what about `console.log`? Isn't that blocking I/O? Yes but let's ignore that for now. We'll continue on in our journey towards promises.
 
 ## Writing to a file
 
-Let's enhance our program by saving the sorted array of words to a file. From the Node.js documentation, there is a built-it module called `fs` for interacting with the file system.
+Let's enhance our program by saving the sorted array of words to a file. From the Node.js documentation, we know there is a built-it module called `fs` for interacting with the file system.
 
 ```JavaScript
 const fs = require("fs");
@@ -315,6 +315,8 @@ function save(array) {
   return array;
 }
 ```
+
+If we add that function into our functional pipeline,
 
 ```JavaScript
 function justDoIt(processData) {
@@ -341,5 +343,47 @@ One of the many features of Node.js is non-blocking I/O. The `writeFile` functio
 1. The `save` function returns the array
 1. The `output` function is invoked
 1. The words are displayed in the terminal
+1. The `output` function returns the array
 1. The `justDoIt` function returns the array
 1. Node.js preforms the I/O and writes the array to the file system
+
+That's not what we want. We want the words saved to the file system before we output them to the terminal. Isn't that the way our nice functional, synchronous-looking program looks? To make that happen, we need to move into the world of asynchronous programming.
+
+## Writing to a file using a callback
+
+Since Node.js got us into this asynchronous mess with its non-blocking I/O, it better have a solution. The original solution is the callback function. Asynchronous functions in Node.js include a callback function as its last parameter.
+
+```JavaScript
+function save(array) {
+  fs.writeFile("saved.txt", array, saveCallback)
+  return array;
+}
+```
+
+Asynchronous callback functions in Node.js have a specific invocation signature of two parameters: `error` and `data`.
+
+```JavaScript
+function saveCallback(error, data) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(data);
+    console.log("saved data");
+    console.log();
+  }
+}
+```
+
+If there is any kind of error writing to the file system, the `saveCallback` will be invoked passing an error object as the first parameter. If successful, the `saveCallback` will be invoked with `false` as the first parameter and the result passed as the second. In this case, `writeFile` does not have any real result so the second parameter will be `undefined`.
+
+Running our sort program with the output from the `saveCallback` just confirms that the save is happening at the end. Still not what we want.
+
+```text
+four
+one
+three
+two
+undefined
+saved data
+
+```
