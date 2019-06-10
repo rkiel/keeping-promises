@@ -290,8 +290,13 @@ You are asking, "I thought this was an article about promises?"
 Fair enough. We are laying the groundwork for promises. Let's review what we have built so far in the `justDoIt` function.
 
 - We have created a data pipeline where we start off with an object containing process information and step-by-step transforming that data into an array of unique words.
-- The data pipeline is achieved by a sequence of function calls: `getCommandLineArgs`, `removeFirst`, `unique`, `sort`, and `output`. The output of one function is the input to the next function. This is a functional style of programming.
+- The data pipeline is achieved by a sequence of function calls: `getCommandLineArgs`, `removeFirst`, `unique`, `sort`, and `output`. The output of one function is the input to the next function.
+- Each of the functions in the data pipeline are simple with a single purpose. They are easy to understand and easy to write unit tests.
 
-This step-by-step approach should feel easy and natural. We probably spend the majority of day writing very synchronous code. The execution of `justDoIt` runs from start to finish without any blocking. But what about `console.log`? That's blocking I/O. Let's replace it.
+This is a functional style of programming. This step-by-step approach should feel easy and natural.
+
+It is also a very synchronous style of programming. Since it is JavaScript, there is one execution thread and the execution of `justDoIt` runs super fast from start to finish. None of the functions have any execution roadblocks, such as blocking I/O, to slow it down.
+
+But what about `console.log`? Isn't that blocking I/O. Yes but let's ignore that for now.
 
 ## Writing to a file
