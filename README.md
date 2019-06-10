@@ -195,3 +195,90 @@ function sort(array) {
   return array.sort();
 }
 ```
+
+If we add that into our functional pipeline,
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const sortedArray = sort(missingScript);
+    const outputArray = output(sortedArray);
+
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+we now get the following output.
+
+```text
+four
+one
+three
+two
+```
+
+Great. We now have a program to sort words.
+
+## Uniqueness
+
+Our simple sort program does just fine but what should we do if the same word appears more than once?
+
+```bash
+node sort.js one two three four four
+```
+
+Let's decide to filter out duplicates. To do this, we need to transform the array of words into an array of unique words. We can write a function called `unique` to do that transformation.
+
+```JavaScript
+function unique(array) {
+  return array.reduce(uniqueReducer, []);
+}
+```
+
+Just like with `output`, we are using a built-in array function called `reduce`. We now have another opportunity to use a callback function. We register the function `uniqueReducer` by passing it as a parameter. And just like with the built-in `each`, `reduce` handles looping through the array. But `reduce` goes one step further, it returns a value. More specifically, an accumulated value. To initialize that accumulated value, we pass in a second parameter to `reduce`. In our case, we will initialize with in an empty array which will be transformed into an array of unique values.
+
+The `uniqueReducer` looks at the accumulated value to see if it contains the array element. If it does, it does not add the element. Otherwise, it adds the element to the accumulate value.
+
+```JavaScript
+function uniqueReducer(accum, elem) {
+  if (accum.includes(elem)) {
+    return accum;
+  } else {
+    return accum.concat([elem]);
+  }
+}
+```
+
+If we add those functions into our functional pipeline,
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const outputArray = output(sortedArray);
+
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+We now have a list of unique, sorted words.
+
+```text
+four
+one
+three
+two
+```
