@@ -241,9 +241,9 @@ function unique(array) {
 }
 ```
 
-Just like with `output`, we are using a built-in array function called `reduce`. We now have another opportunity to use a callback function. We register the function `uniqueReducer` by passing it as a parameter. And just like with the built-in `each`, `reduce` handles looping through the array. But `reduce` goes one step further, it returns a value. More specifically, an accumulated value. To initialize that accumulated value, we pass in a second parameter to `reduce`. In our case, we will initialize with in an empty array which will be transformed into an array of unique values.
+Just like with `output`, we are using a built-in array function called `reduce`. We now have another opportunity to use a callback function. We register the function `uniqueReducer` by passing it as a parameter. And just like with the built-in `each`, `reduce` handles looping through the array. But `reduce` goes one step further, it returns a value. More specifically, an accumulated value. To initialize that accumulated value, we pass in a second parameter to `reduce`. In our case, we will initialize with an empty array which will be transformed into an array of unique values.
 
-The `uniqueReducer` looks at the accumulated value to see if it contains the array element. If it does, it does not add the element. Otherwise, it adds the element to the accumulate value.
+The `uniqueReducer` looks at the accumulated value to see if it contains the array element. If it does, it does not add the element. Otherwise, it adds the element to the accumulated value.
 
 ```JavaScript
 function uniqueReducer(accum, elem) {
@@ -287,7 +287,10 @@ two
 
 You are asking, "I thought this was an article about promises?"
 
-Fair enough. We are laying the groundwork for promises. Let's review what we have built so far in the `justDoIt` function. We have created a data pipeline where we start off with an object containing process information and step-by-step transforming that data into an array of unique words. The data pipeline is achieved by a sequence of function calls: `getCommandLineArgs`, `removeFirst`, `unique`, `sort`, and `output`. The output of one function is the input to the next function. This is a functional style of programming.
+Fair enough. We are laying the groundwork for promises. Let's review what we have built so far in the `justDoIt` function.
+
+- We have created a data pipeline where we start off with an object containing process information and step-by-step transforming that data into an array of unique words.
+- The data pipeline is achieved by a sequence of function calls: `getCommandLineArgs`, `removeFirst`, `unique`, `sort`, and `output`. The output of one function is the input to the next function. This is a functional style of programming.
 
 This step-by-step approach should feel easy and natural. We probably spend the majority of day writing very synchronous code. The execution of `justDoIt` runs from start to finish without any blocking. But what about `console.log`? That's blocking I/O. Let's replace it.
 
