@@ -135,7 +135,7 @@ We now have an array of words.
 
 ## Output
 
-Even though our list of words is not in alphabetic order, we can still format the output so that each work appears on a separate line. Our next task does not need a transform but rather generate a side-effect. We can write a function called `output` to iterate over each array item.
+Even though our list of words is not in alphabetic order, we can still format the output so that each word appears on a separate line. Our next task does not need a transform but rather generate a side-effect. We can write a function called `output` to iterate over each array item.
 
 ```JavaScript
 function output(array) {
@@ -184,4 +184,14 @@ one
 two
 three
 four
+```
+
+## Sorting
+
+We are finally at the main event. Our next task is to transform the array into an array that is in alphabetical order. We can write a function called `sort` to do that transformation.
+
+```JavaScript
+function sort(array) {
+  return array.sort();
+}
 ```
