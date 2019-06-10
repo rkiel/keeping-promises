@@ -300,3 +300,46 @@ It is also a very synchronous style of programming. Since it is JavaScript, ther
 But what about `console.log`? Isn't that blocking I/O. Yes but let's ignore that for now.
 
 ## Writing to a file
+
+Let's enhance our program by saving the sorted array of words to a file. From the Node.js documentation, there is a built-it module called `fs` for interacting with the file system.
+
+```JavaScript
+const fs = require("fs");
+```
+
+The `fs` module has a function `writeFile` that we can use to save the array. We can write an identity function, just like our `output`, called `save`.
+
+```JavaScript
+function save(array) {
+  fs.writeFile("saved.txt", array)
+  return array;
+}
+```
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const savedArray = save(sortedArray);
+    const outputArray = output(savedArray);
+
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+One of the many features of Node.js is non-blocking I/O. The `writeFile` function is a non-block function resulting in the following execution steps.
+
+1. The `save` function is invoked
+1. A request to write the array to the file system is made (but not performed)
+1. The `save` function returns the array
+1. The `output` function is invoked
+1. The words are displayed in the terminal
+1. The `justDoIt` function returns the array
+1. Node.js preforms the I/O and writes the array to the file system
