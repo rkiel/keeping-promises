@@ -394,7 +394,7 @@ saved data
 
 ## Welcome to callback hell
 
-Hopefully you can see now that the only way to get the order right is move the call to `output` into `saveCallback`.
+Hopefully you can see now that the only way to get the order right is to move the call to `output` into `saveCallback`.
 
 ```JavaScript
 function saveCallback(error, data) {
@@ -429,7 +429,7 @@ function save(array) {
 }
 ```
 
-Because of the scoping rules of JavaScript, the array passed into `save` is now available inside of `saveCallback`. Perfect. One thing that is a little messy is that `save` is now hard-coded with `output`. Let's clean that up by passing in a callback to `save`.
+Because of the scoping rules of JavaScript, the array passed into `save` is now available inside of `saveCallback`. Perfect. However, one thing that is a little messy is that `save` is now hard-coded with `output`. Let's clean that up by passing in a callback to `save`.
 
 ```JavaScript
 function save(array, callback) {
@@ -588,4 +588,4 @@ function justDoIt(processData) {
 }
 ```
 
-So promises seem like a big win for us. We get to write asynchronous code code is mush simpler than "callback hell". Even though we are doing asynchronous programming, the code we write is still has a very synchronous look and feel to it.
+So promises seem like a big win for us. We get to write asynchronous code in a style that is much simpler and will scale much more in big, complex applications than using "callback hell". And even though we are doing asynchronous programming, the code we write still has a very synchronous look and feel to it.
