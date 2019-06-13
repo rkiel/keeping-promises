@@ -353,7 +353,7 @@ The outcome is correct but that is not the intent of what we wrote. Our intent w
 
 So what's going on? We have written a functional, synchronous-looking program. Unfortunately, with the introduction of `writeFile`, our program became transformed into the world of asynchronous programming.
 
-## Writing to a file using a callback
+## Writing to a file using an asynchronous callback
 
 Since the Node.js `writeFile` got us into this asynchronous mess with its non-blocking I/O, it better have a solution. The first solution we can try is the use of a callback function. Asynchronous functions in Node.js include a callback function as its last parameter. Suppose we had a callback function called `saveCallback`. We can pass it as the last parameter to `writeFile`.
 
@@ -391,3 +391,201 @@ undefined
 saved data
 
 ```
+
+## Welcome to callback hell
+
+Hopefully you can see now that the only way to get the order right is move the call to `output` into `saveCallback`.
+
+```JavaScript
+function saveCallback(error, data) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(data);
+    console.log("saved data");
+    console.log();
+    return output(array);  // problem solved???
+  }
+}
+```
+
+No problem except that inside of `saveCallback` there is no access to the array. The callback follows that standard Node.js contract and the array is not passed in and thus not available to be passed to `output`. JavaScript gives us several techniques to solve this problem. Since we are on the road to promises, we'll pick one of the simpler ones. What if we define the `saveCallback` inside the `save` function?
+
+```JavaScript
+function save(array) {
+  function saveCallback(error, data) {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      console.log("saved data");
+      console.log();
+      return output(array);
+    }
+  }
+
+  fs.writeFile("saved.txt", array, saveCallback);
+  return array;
+}
+```
+
+Because of the scoping rules of JavaScript, the array passed into `save` is now available inside of `saveCallback`. Perfect. One thing that is a little messy is that `save` is now hard-coded with `output`. Let's clean that up by passing in a callback to `save`.
+
+```JavaScript
+function save(array, callback) {
+  function saveCallback(error, data) {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      console.log("saved data");
+      console.log();
+      if (callback) {
+        return callback(array);
+      }
+    }
+  }
+```
+
+We can then write an identity function called `outputCallback` to invoke our `output`.
+
+```JavaScript
+function outputCallback(array) {
+  output(array);
+  return array;
+}
+```
+
+We can pass the `outputCallback` as the second parameter to `save`.
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const savedArray = save(sortedArray, outputCallback);
+
+    return savedArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+And now when we run our sort program, we get the order and the output that we wanted.
+
+```text
+undefined
+saved data
+
+four
+one
+three
+two
+```
+
+But at what price? This technique works fine for something as simple as our little sort program but try writing a complex, asynchronous application like this. That's when you find yourself in the world of nested callbacks known as "callback hell".
+
+## Welcome to Promises
+
+Promises are now part of JavaScript language.
+
+## Writing to a file using a promise
+
+We have been using the built-in `fs` module to interact with the file system. By default, the functions you have access to all use the asynchronous callback technique. There is an alternative where the functions return promises instead of using callbacks.
+
+```JavaScript
+const fs = require("fs").promises;
+```
+
+Let's start by going back to our original `save` function. The `writeFile` now returns a promise. The `save` function is no longer an identity function. It now returns a promise.
+
+```JavaScript
+function save(array) {
+  const promise = fs.writeFile("saved.txt", array)
+  return promise;
+}
+```
+
+We can write an identity function called `writeFileCallback` that contains all the success logic of the `saveCallback`.
+
+```JavaScript
+function writeFileCallback(data) {
+  console.log(data);
+  console.log("saved data");
+  console.log();
+  return data;
+}
+```
+
+We can chain that callback to when the asynchronous work of writing to the file system is complete.
+
+```JavaScript
+function save(array) {
+  const promise = fs.writeFile("saved.txt", array);
+  const promise2 = promise.then(writeFileCallback);
+  return promise2;
+}
+```
+
+If you recall, `writeFile` does not return any data and we still need a way to pass the array onto the next step in our pipeline, which is `output`. To do that, we still need a `saveCallback` but it is a much simpler one.
+
+```JavaScript
+function save(array) {
+  function saveCallback(data) {
+    return array;
+  }
+
+  const promise = fs.writeFile("saved.txt", array);
+  const promise2 = promise.then(writeFileCallback);
+  const promise3 = promise2.then(saveCallback);
+
+  return promise3;
+}
+```
+
+The `saveCallback` is still an internal function and it is there to take advantage of the scoping rules of JavaScript. It receives `data` from the previous thing in the promise chain, ignores it completely, and instead passes the array onto the next thing in the promise chain.
+
+Of course, once we change `save` to return a promise, this bubbles up to our main function. And then `justDoIt` will also bubble up the promise.
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const promise = save(sortedArray);
+
+    return promise;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+We can reuse the `outputCallback` and add it to the promise chain so that the terminal output appears after the data is saved to the file.
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const promise = save(sortedArray);
+    const promise2 = promise.then(outputCallback);
+
+    return promise2;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+So promises seem like a big win for us. We get to write asynchronous code code is mush simpler than "callback hell". Even though we are doing asynchronous programming, the code we write is still has a very synchronous look and feel to it.

@@ -81,6 +81,8 @@ function justDoIt(processData) {
   const promise2 = promise.then(outputCallback);
   const promise3 = promise2.then(closing);
   const promise4 = promise3.catch(handleError);
+
+  return promise4;
 }
 
 justDoIt(process);
