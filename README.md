@@ -336,22 +336,26 @@ function justDoIt(processData) {
 }
 ```
 
-One of the many features of Node.js is non-blocking I/O. The `writeFile` function is a non-block function resulting in the following execution steps.
+We can run out sort program and see that the hard-coded output file `saved.txt` gets created with the contents of the array. Perfect, right? Not so fast. The correct outcome deceives us about the fact that there is something fundamentally wrong about the code we wrote. Let's dig deeper.
+
+One of the many features of Node.js is non-blocking I/O. The `writeFile` function is a non-blocking function. This means that the program execution thread is not blocked waiting for the I/O to complete. It initiates the request for I/O and then continues on. Let's look closely at the program execution thread during the steps of `save` and `output`.
 
 1. The `save` function is invoked
-1. A request to write the array to the file system is made (but not performed)
-1. The `save` function returns the array
+   1. A request to write the array to the file system is made (but not actually performed)
+   1. The `save` function returns the array
 1. The `output` function is invoked
-1. The words are displayed in the terminal
-1. The `output` function returns the array
+   1. The words are displayed in the terminal
+   1. The `output` function returns the array
 1. The `justDoIt` function returns the array
 1. Node.js preforms the I/O and writes the array to the file system
 
-That's not what we want. We want the words saved to the file system before we output them to the terminal. Isn't that the way our nice functional, synchronous-looking program looks? To make that happen, we need to move into the world of asynchronous programming.
+The outcome is correct but that is not the intent of what we wrote. Our intent was to save the array to the file and then write the array to the terminal. Well, in this case, who cares? It doesn't matter. However, next time, when we are writing a banking application, the order will absolutely matter.
+
+So what's going on? We have written a functional, synchronous-looking program. Unfortunately, with the introduction of `writeFile`, our program became transformed into the world of asynchronous programming.
 
 ## Writing to a file using a callback
 
-Since Node.js got us into this asynchronous mess with its non-blocking I/O, it better have a solution. The original solution is the callback function. Asynchronous functions in Node.js include a callback function as its last parameter.
+Since the Node.js `writeFile` got us into this asynchronous mess with its non-blocking I/O, it better have a solution. The first solution we can try is the use of a callback function. Asynchronous functions in Node.js include a callback function as its last parameter. Suppose we had a callback function called `saveCallback`. We can pass it as the last parameter to `writeFile`.
 
 ```JavaScript
 function save(array) {
@@ -360,7 +364,7 @@ function save(array) {
 }
 ```
 
-Asynchronous callback functions in Node.js have a specific invocation signature of two parameters: `error` and `data`.
+Node.js. defines a standard contract for asynchronous callback functions which is a specific signature of two parameters: `error` and `data`. We can now write our `saveCallback`.
 
 ```JavaScript
 function saveCallback(error, data) {
@@ -374,9 +378,9 @@ function saveCallback(error, data) {
 }
 ```
 
-If there is any kind of error writing to the file system, the `saveCallback` will be invoked passing an error object as the first parameter. If successful, the `saveCallback` will be invoked with `false` as the first parameter and the result passed as the second. In this case, `writeFile` does not have any real result so the second parameter will be `undefined`.
+Besides the parameter signature, the Node.js contract includes how they are passed. If Node.js encounters any kind of error doing its asynchronous work, the `saveCallback` will be invoked passing an error object as the first parameter. If the asynchronous work is completed successfully, the `saveCallback` will be invoked with the first parameter set to `false` and the second parameter as the asynchronous result. In this particular case, `writeFile` does not have any real result so the second parameter will be passed as `undefined`.
 
-Running our sort program with the output from the `saveCallback` just confirms that the save is happening at the end. Still not what we want.
+If we rerun our sort program using the `saveCallback`, we see that the output just confirms that the `save` is happening after the `output`. Still not what we want but we have take a step closer.
 
 ```text
 four
