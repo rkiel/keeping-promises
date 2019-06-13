@@ -559,6 +559,7 @@ function justDoIt(processData) {
     const missingScript = removeFirst(missingNode);
     const uniqueArray = unique(missingScript);
     const sortedArray = sort(uniqueArray);
+
     const promise = save(sortedArray);
 
     return promise;
@@ -578,6 +579,7 @@ function justDoIt(processData) {
     const missingScript = removeFirst(missingNode);
     const uniqueArray = unique(missingScript);
     const sortedArray = sort(uniqueArray);
+
     const promise = save(sortedArray);
     const promise2 = promise.then(outputCallback);
 
@@ -588,4 +590,46 @@ function justDoIt(processData) {
 }
 ```
 
-So promises seem like a big win for us. We get to write asynchronous code in a style that is much simpler and will scale much more in big, complex applications than using "callback hell". And even though we are doing asynchronous programming, the code we write still has a very synchronous look and feel to it.
+So promises seem like a big win for us. We get to write asynchronous code in a style that is much simpler and will scale much more in big, complex applications than using "callback hell". And even though we are doing asynchronous programming, the code we write still has a very synchronous look and feel to it which we are already familiar and comfortable with.
+
+## Exception handling
+
+If you think back to the original implementation of `saveCallback`, it had logic for both failure and success.
+
+```JavaScript
+function saveCallback(error, data) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(data);
+    console.log("saved data");
+    console.log();
+  }
+}
+```
+
+We moved the success logic to the `writeFileCallback` but what about the failure logic? If `writeFile` fails for any reason, won't it get caught by our try/catch? No, it will not. The try/catch only handles errors when the execution thread runs through `justDoIt`. The actual writing to the file system, as we have seen, happens asynchronously after `justDoIt` completes.
+
+One of the benefits that promises gives to asynchronous programming is the return of exception handling in the style and spirit of the familiar try/catch. And since the method signature is the same, our `handleError` function can be used by both the try/catch and the promise `catch`.
+
+```JavaScript
+function justDoIt(processData) {
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+
+    const promise = save(sortedArray);
+    const promise2 = promise.then(outputCallback);
+    const promise3 = promise2.catch(handleError);
+
+    return promise3;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
+
+Now if there is any error condition writing to the file system, the asynchronous execution will skip over the `outputCallback` and invoke `handleError`.

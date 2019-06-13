@@ -66,23 +66,21 @@ function outputCallback(array) {
   return array;
 }
 
-function closing() {
-  console.log();
-  console.log("THE END");
-}
-
 function justDoIt(processData) {
-  const initialArgs = getCommandLineArgs(processData);
-  const missingNode = removeFirst(initialArgs);
-  const missingScript = removeFirst(missingNode);
-  const uniqueArray = unique(missingScript);
-  const sortedArray = sort(uniqueArray);
-  const promise = save(sortedArray);
-  const promise2 = promise.then(outputCallback);
-  const promise3 = promise2.then(closing);
-  const promise4 = promise3.catch(handleError);
+  try {
+    const initialArgs = getCommandLineArgs(processData);
+    const missingNode = removeFirst(initialArgs);
+    const missingScript = removeFirst(missingNode);
+    const uniqueArray = unique(missingScript);
+    const sortedArray = sort(uniqueArray);
+    const promise = save(sortedArray);
+    const promise2 = promise.then(outputCallback);
+    const promise3 = promise2.catch(handleError);
 
-  return promise4;
+    return promise3;
+  } catch (e) {
+    handleError(e);
+  }
 }
 
 justDoIt(process);
