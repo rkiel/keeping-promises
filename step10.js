@@ -66,11 +66,6 @@ function outputCallback(array) {
   return array;
 }
 
-function closing() {
-  console.log();
-  console.log("THE END");
-}
-
 function read() {
   const promise = fs.readFile("input.txt");
   return promise;
@@ -91,9 +86,10 @@ function justDoIt(processData) {
   const promise4 = promise3.then(unique);
   const promise5 = promise4.then(sort);
   const promise6 = promise5.then(save);
-  const promise7 = promise6.then(output);
-  const promise8 = promise7.then(closing);
-  const promise9 = promise8.catch(handleError);
+  const promise7 = promise6.then(outputCallback);
+  const promise8 = promise7.catch(handleError);
+
+  return promise8;
 }
 
 justDoIt(process);
