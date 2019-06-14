@@ -54,11 +54,10 @@ function save(array) {
     return array;
   }
 
-  const promise = fs.writeFile("saved.txt", array);
-  const promise2 = promise.then(writeFileCallback);
-  const promise3 = promise2.then(saveCallback);
-
-  return promise3;
+  return fs
+    .writeFile("saved.txt", array)
+    .then(writeFileCallback)
+    .then(saveCallback);
 }
 
 function outputCallback(array) {
@@ -66,14 +65,8 @@ function outputCallback(array) {
   return array;
 }
 
-function closing() {
-  console.log();
-  console.log("THE END");
-}
-
 function read() {
-  const promise = fs.readFile("input.txt");
-  return promise;
+  return fs.readFile("input.txt");
 }
 
 function convertToString(data) {
@@ -84,7 +77,7 @@ function stringToArray(data) {
   return data.split("\n");
 }
 
-async function justDoIt(processData) {
+async function justDoIt() {
   try {
     const data = await read();
     const string = convertToString(data);
@@ -93,10 +86,11 @@ async function justDoIt(processData) {
     const sortedArray = sort(uniqueArray);
     const savedArray = await save(sortedArray);
     const outputArray = output(savedArray);
-    closing();
+
+    return outputArray;
   } catch (e) {
     handleError(e);
   }
 }
 
-justDoIt(process);
+justDoIt();

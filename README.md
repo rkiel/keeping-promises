@@ -682,7 +682,7 @@ Since we have written our data pipeline from top to bottom with promises, we no 
 
 ## Promises in the real world
 
-Throughout this tutorial, we've written code in a style that is meant for instruction but not what you see in the real world. Let's re-write several of our functions to be more realistic.
+Throughout this tutorial, we've written code in a style that is meant for instruction but not what you would see in the real world. Let's re-write several of our functions to be more realistic.
 
 First, we can re-write `save` and remove all the intermediate variables in favor of method chaining.
 
@@ -721,3 +721,7 @@ function justDoIt() {
     .catch(handleError);
 }
 ```
+
+## Async/Await
+
+JavaScript promises give us a nice way to do asynchronous programming in a style that looks very synchronous. This makes building complex programs much easier and familiar to most developers. But we do better? The caretakers of the JavaScript language have listened to the community and added Async/Await to the language to make asynchronous programming even simpler. This will be our last stop on the journey of promises.
