@@ -636,7 +636,7 @@ Now if there is any error condition writing to the file system, the asynchronous
 
 ## Reading from a file using a promise
 
-Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. We've already used the `fs` module function `writeFile` and it has a corresponding `readFile` function. We can use it in a function called `read` to read the words from a file. And like `writeFile`, `readFile` will return a promise but unlike `writeFile`, it will return the the contents of the file.
+Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. We've already used the `fs` module function `writeFile` and it has a corresponding `readFile` function. We can use it in a function called `read` to read the words from a file. And like `writeFile`, `readFile` will return a promise but unlike `writeFile`, which returned `undefined`, `readFile` will return the the contents of the file.
 
 ```JavaScript
 function read() {
@@ -678,11 +678,13 @@ function justDoIt() {
 }
 ```
 
+Since we have written our data pipeline from top to bottom with promises, we no longer need the try/catch.
+
 ## Promises in the real world
 
-Throughout this tutorial, we've written code in a style that is meant for instruction but not what you see in the real world.
+Throughout this tutorial, we've written code in a style that is meant for instruction but not what you see in the real world. Let's re-write several of our functions to be more realistic.
 
-We can re-write `save` and remove all the intermediate variables in favor of method chaining.
+First, we can re-write `save` and remove all the intermediate variables in favor of method chaining.
 
 ```JavaScript
 function save(array) {
@@ -697,7 +699,7 @@ function save(array) {
 }
 ```
 
-We can re-write `read`.
+Second, we can re-write `read` without an intermediate variable.
 
 ```JavaScript
 function read() {
@@ -705,7 +707,7 @@ function read() {
 }
 ```
 
-And finally, we can simplify `justDoIt`.
+And finally, we can re-write `justDoIt` and greatly simplify it using method chaining.
 
 ```JavaScript
 function justDoIt() {
