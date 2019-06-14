@@ -633,3 +633,89 @@ function justDoIt(processData) {
 ```
 
 Now if there is any error condition writing to the file system, the asynchronous execution will skip over the `outputCallback` and invoke `handleError`.
+
+## Reading from a file using a promise
+
+Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. Just like the `fs` module has a `writeFile`, it has a `readFile`. We can create a function to read a file and return a promise for the contents of the file.
+
+```JavaScript
+function read() {
+  const promise = fs.readFile("input.txt");
+  return promise;
+}
+```
+
+From the Node.js documentation, we know that `readFile` returns the contents of the file as a Buffer. We can write a function called `convertToString` that will transform the Buffer into a string.
+
+```JavaScript
+function convertToString(data) {
+  return data.toString("utf-8");
+}
+```
+
+The contents of the file has one word per line. We can write a function called `stringToArray` to convert the multi-line string into a an array.
+
+```JavaScript
+function stringToArray(data) {
+  return data.split("\n");
+}
+```
+
+With these three functions, we can re-write our data pipeline using promises. And since we have written our functions well, we can re-use `unique`, `sort`, `save`, `outputCallback`, and `handleError`.
+
+```JavaScript
+function justDoIt() {
+  const promise = read();
+  const promise2 = promise.then(convertToString);
+  const promise3 = promise2.then(stringToArray);
+  const promise4 = promise3.then(unique);
+  const promise5 = promise4.then(sort);
+  const promise6 = promise5.then(save);
+  const promise7 = promise6.then(outputCallback);
+  const promise8 = promise7.catch(handleError);
+
+  return promise8;
+}
+```
+
+## Promises in the real world
+
+Throughout this tutorial, we've written code in a style that is meant for instruction but not what you see in the real world.
+
+We can re-write `save` and remove all the intermediate variables in favor of method chaining.
+
+```JavaScript
+function save(array) {
+  function saveCallback(data) {
+    return array;
+  }
+
+  return fs
+    .writeFile("saved.txt", array)
+    .then(writeFileCallback)
+    .then(saveCallback);
+}
+```
+
+We can re-write `read`.
+
+```JavaScript
+function read() {
+  return fs.readFile("input.txt");
+}
+```
+
+And finally, we can simplify `justDoIt`.
+
+```JavaScript
+function justDoIt() {
+  return read()
+    .then(convertToString)
+    .then(stringToArray)
+    .then(unique)
+    .then(sort)
+    .then(save)
+    .then(output)
+    .catch(handleError);
+}
+```

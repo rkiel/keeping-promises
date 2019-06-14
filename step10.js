@@ -79,7 +79,7 @@ function stringToArray(data) {
   return data.split("\n");
 }
 
-function justDoIt(processData) {
+function justDoIt() {
   const promise = read();
   const promise2 = promise.then(convertToString);
   const promise3 = promise2.then(stringToArray);
@@ -92,4 +92,4 @@ function justDoIt(processData) {
   return promise8;
 }
 
-justDoIt(process);
+justDoIt();

@@ -54,11 +54,10 @@ function save(array) {
     return array;
   }
 
-  const promise = fs.writeFile("saved.txt", array);
-  const promise2 = promise.then(writeFileCallback);
-  const promise3 = promise2.then(saveCallback);
-
-  return promise3;
+  return fs
+    .writeFile("saved.txt", array)
+    .then(writeFileCallback)
+    .then(saveCallback);
 }
 
 function outputCallback(array) {
@@ -66,14 +65,8 @@ function outputCallback(array) {
   return array;
 }
 
-function closing() {
-  console.log();
-  console.log("THE END");
-}
-
 function read() {
-  const promise = fs.readFile("input.txt");
-  return promise;
+  return fs.readFile("input.txt");
 }
 
 function convertToString(data) {
@@ -84,18 +77,15 @@ function stringToArray(data) {
   return data.split("\n");
 }
 
-function justDoIt(processData) {
-  const promise = read()
+function justDoIt() {
+  return read()
     .then(convertToString)
     .then(stringToArray)
     .then(unique)
     .then(sort)
     .then(save)
     .then(output)
-    .then(closing)
     .catch(handleError);
-
-  return promise;
 }
 
-justDoIt(process);
+justDoIt();
