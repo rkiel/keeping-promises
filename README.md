@@ -636,7 +636,7 @@ Now if there is any error condition writing to the file system, the asynchronous
 
 ## Reading from a file using a promise
 
-Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. Just like the `fs` module has a `writeFile`, it has a `readFile`. We can create a function to read a file and return a promise for the contents of the file.
+Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. We've already used the `fs` module function `writeFile` and it has a corresponding `readFile` function. We can use it in a function called `read` to read the words from a file. And like `writeFile`, `readFile` will return a promise but unlike `writeFile`, it will return the the contents of the file.
 
 ```JavaScript
 function read() {
@@ -645,7 +645,7 @@ function read() {
 }
 ```
 
-From the Node.js documentation, we know that `readFile` returns the contents of the file as a Buffer. We can write a function called `convertToString` that will transform the Buffer into a string.
+From the Node.js documentation, we know that `readFile` returns the contents of the file as a Buffer. Ultimately, we want to work with an array of strings so the first step will be to convert the Buffer into a string. We can write a function called `convertToString` that does just that.
 
 ```JavaScript
 function convertToString(data) {
