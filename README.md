@@ -1,4 +1,14 @@
-# Promises -- A Journey From Callbacks to Async/Await
+# JavaScript - A whole new world
+
+We all know that every country has its own set of unique idioms and customs. Effective day-to-day living requires a solid understanding and mastery of them. So to with programming. Each programming language has its own set of unique idioms and customs. When working with a language such as JavaScript, it's important to understand and embracing its uniqueness so that we don't end up writing Java/Ruby/C#/PHP in JavaScript. This article looks at two specific features in JavaScript: functional programming and asynchronous programming.
+
+## Functional programming
+
+From the beginning, the JavaScript language has supported an object-oriented style of programming. Keywords such as `prototype` and `this` have made it possible to define classes and create instances of of those classes.
+
+## Asynchronous programming
+
+## Going on an adventure
 
 Let's build a simple alphabetic sort program in Node.js and along the way explore "promises" in JavaScript. (And maybe we'll see some functional programming too.)
 
@@ -722,6 +732,11 @@ function justDoIt() {
 }
 ```
 
+## Cobminations
+
+Promise.all
+Promise.race
+
 ## Async/Await
 
-JavaScript promises give us a nice way to do asynchronous programming in a style that looks very synchronous. This makes building complex programs much easier and familiar to most developers. But we do better? The caretakers of the JavaScript language have listened to the community and added Async/Await to the language to make asynchronous programming even simpler. This will be our last stop on the journey of promises.
+JavaScript promises give us a nice way to do asynchronous programming in a style that looks very synchronous. This makes building complex programs much easier and familiar to most developers. But could we do better? The caretakers of the JavaScript language have listened to the community and added Async/Await to the language to make asynchronous programming even simpler. This will be our last stop on the journey of promises.
