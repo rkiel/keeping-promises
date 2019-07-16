@@ -452,6 +452,8 @@ function justDoIt(processData) {
 ## Welcome to Promises
 
 - Promises are now part of JavaScript language.
+- first-class object
+- at some point in the future will have a value
 
 * an abstraction around asynchronous result
 * Promises end up in either one of two states: Resolved or Reject
@@ -716,3 +718,20 @@ async function justDoIt() {
   }
 }
 ```
+
+## Homwork
+
+YouTube: Redemption from Callback Hell
+https://www.youtube.com/watch?v=hf1T_AONQJU
+
+- listen to Michael Jackson
+- ignore Domenic Denicola (nothing personal)
+- ignore ES6 Generators
+
+* before asycn/await was finalized
+
+* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-intro/
+
+* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-arrays/
+
+* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-functions/
