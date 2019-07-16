@@ -446,21 +446,28 @@ function justDoIt(processData) {
 
 - output is correct
 
-But at what price? This technique works fine for something as simple as our little sort program but try writing a complex, asynchronous application like this. That's when you find yourself in the world of nested callbacks known as "callback hell".
+* But at what price?
+* try writing a complex, asynchronous application like this. "callback hell".
 
 ## Welcome to Promises
 
-Promises are now part of JavaScript language.
+- Promises are now part of JavaScript language.
 
-## Writing to a file using a promise
+* an abstraction around asynchronous result
+* Promises end up in either one of two states: Resolved or Reject
+* Promises can be chained together
+* Callbacks require you to passing something into a function
+* Promises return you an object which you can then pass something in
 
-We have been using the built-in `fs` module to interact with the file system. By default, the functions you have access to all use the asynchronous callback technique. There is an alternative where the functions return promises instead of using callbacks.
+## Writing using a promise
+
+- `fs` has an alternative where the functions return promises instead of using callbacks.
 
 ```JavaScript
 const fs = require("fs").promises;
 ```
 
-Let's start by going back to our original `save` function. The `writeFile` now returns a promise. The `save` function is no longer an identity function. It now returns a promise.
+- remove callback, return promise
 
 ```JavaScript
 function save(array) {
@@ -469,7 +476,7 @@ function save(array) {
 }
 ```
 
-We can write an identity function called `writeFileCallback` that contains all the success logic of the `saveCallback`.
+- an identity function called `writeFileCallback` that contains all the success logic of the `saveCallback`.
 
 ```JavaScript
 function writeFileCallback(data) {
@@ -480,7 +487,7 @@ function writeFileCallback(data) {
 }
 ```
 
-We can chain that callback to when the asynchronous work of writing to the file system is complete.
+- chain them together using `then`
 
 ```JavaScript
 function save(array) {
@@ -490,7 +497,8 @@ function save(array) {
 }
 ```
 
-If you recall, `writeFile` does not return any data and we still need a way to pass the array onto the next step in our pipeline, which is `output`. To do that, we still need a `saveCallback` but it is a much simpler one.
+- `writeFile` does not return any data
+- we still need a `saveCallback` but it is a much simpler one.
 
 ```JavaScript
 function save(array) {
@@ -506,9 +514,7 @@ function save(array) {
 }
 ```
 
-The `saveCallback` is still an internal function and it is there to take advantage of the scoping rules of JavaScript. It receives `data` from the previous thing in the promise chain, ignores it completely, and instead passes the array onto the next thing in the promise chain.
-
-Of course, once we change `save` to return a promise, this bubbles up to our main function. And then `justDoIt` will also bubble up the promise.
+- split `save` and `output`
 
 ```JavaScript
 function justDoIt(processData) {
@@ -520,27 +526,7 @@ function justDoIt(processData) {
     const sortedArray = sort(uniqueArray);
 
     const promise = save(sortedArray);
-
-    return promise;
-  } catch (e) {
-    handleError(e);
-  }
-}
-```
-
-We can reuse the `outputCallback` and add it to the promise chain so that the terminal output appears after the data is saved to the file.
-
-```JavaScript
-function justDoIt(processData) {
-  try {
-    const initialArgs = getCommandLineArgs(processData);
-    const missingNode = removeFirst(initialArgs);
-    const missingScript = removeFirst(missingNode);
-    const uniqueArray = unique(missingScript);
-    const sortedArray = sort(uniqueArray);
-
-    const promise = save(sortedArray);
-    const promise2 = promise.then(outputCallback);
+    const promise2 = promise.then(output);
 
     return promise2;
   } catch (e) {
@@ -549,11 +535,12 @@ function justDoIt(processData) {
 }
 ```
 
-So promises seem like a big win for us. We get to write asynchronous code in a style that is much simpler and will scale much more in big, complex applications than using "callback hell". And even though we are doing asynchronous programming, the code we write still has a very synchronous look and feel to it which we are already familiar and comfortable with.
+- promises seem like a big win for us
+- write asynchronous code in a style that has a very synchronous look and feel to it which we are already familiar and comfortable with.
 
 ## Exception handling
 
-If you think back to the original implementation of `saveCallback`, it had logic for both failure and success.
+- the original implementation of `saveCallback`, it had logic for both failure and success.
 
 ```JavaScript
 function saveCallback(error, data) {
@@ -567,9 +554,9 @@ function saveCallback(error, data) {
 }
 ```
 
-We moved the success logic to the `writeFileCallback` but what about the failure logic? If `writeFile` fails for any reason, won't it get caught by our try/catch? No, it will not. The try/catch only handles errors when the execution thread runs through `justDoIt`. The actual writing to the file system, as we have seen, happens asynchronously after `justDoIt` completes.
-
-One of the benefits that promises gives to asynchronous programming is the return of exception handling in the style and spirit of the familiar try/catch. And since the method signature is the same, our `handleError` function can be used by both the try/catch and the promise `catch`.
+- We moved the success logic to the `writeFileCallback`
+- what about the failure logic?
+- Promises gives us `catch`
 
 ```JavaScript
 function justDoIt(processData) {
@@ -591,11 +578,11 @@ function justDoIt(processData) {
 }
 ```
 
-Now if there is any error condition writing to the file system, the asynchronous execution will skip over the `outputCallback` and invoke `handleError`.
+- any file system errors will be handled
 
 ## Reading from a file using a promise
 
-Let's continue on with our journey to promises. Instead of passing the words on the command line, we can read them from a file. We've already used the `fs` module function `writeFile` and it has a corresponding `readFile` function. We can use it in a function called `read` to read the words from a file. And like `writeFile`, `readFile` will return a promise but unlike `writeFile`, which returned `undefined`, `readFile` will return the the contents of the file.
+- let's use `readFile`
 
 ```JavaScript
 function read() {
@@ -604,7 +591,8 @@ function read() {
 }
 ```
 
-From the Node.js documentation, we know that `readFile` returns the contents of the file as a Buffer. Ultimately, we want to work with an array of strings so the first step will be to convert the Buffer into a string. We can write a function called `convertToString` that does just that.
+- Node docs says that `readFile` returns the contents of the file as a Buffer not a String.
+- Need to convert the Buffer into a string
 
 ```JavaScript
 function convertToString(data) {
@@ -612,7 +600,8 @@ function convertToString(data) {
 }
 ```
 
-The contents of the file has one word per line. We can write a function called `stringToArray` to convert the multi-line string into a an array.
+- contents of the file has one word per line.
+- a function called `stringToArray` to convert the multi-line string into a an array.
 
 ```JavaScript
 function stringToArray(data) {
@@ -620,7 +609,8 @@ function stringToArray(data) {
 }
 ```
 
-With these three functions, we can re-write our data pipeline using promises. And since we have written our functions well, we can re-use `unique`, `sort`, `save`, `outputCallback`, and `handleError`.
+- we can re-write our data pipeline using promises.
+- And since we have written our functions well, we can re-use `unique`, `sort`, `save`, `outputCallback`, and `handleError`.
 
 ```JavaScript
 function justDoIt() {
@@ -637,13 +627,11 @@ function justDoIt() {
 }
 ```
 
-Since we have written our data pipeline from top to bottom with promises, we no longer need the try/catch.
+- no longer need the try/catch
 
 ## Promises in the real world
 
-Throughout this tutorial, we've written code in a style that is meant for instruction but not what you would see in the real world. Let's re-write several of our functions to be more realistic.
-
-First, we can re-write `save` and remove all the intermediate variables in favor of method chaining.
+- First, we can re-write `save` and remove all the intermediate variables in favor of method chaining.
 
 ```JavaScript
 function save(array) {
@@ -658,7 +646,7 @@ function save(array) {
 }
 ```
 
-Second, we can re-write `read` without an intermediate variable.
+- Second, we can re-write `read` without an intermediate variable.
 
 ```JavaScript
 function read() {
@@ -666,7 +654,7 @@ function read() {
 }
 ```
 
-And finally, we can re-write `justDoIt` and greatly simplify it using method chaining.
+- finally, we can re-write `justDoIt` and greatly simplify it using method chaining.
 
 ```JavaScript
 function justDoIt() {
@@ -681,11 +669,50 @@ function justDoIt() {
 }
 ```
 
-## Cobminations
-
-Promise.all
-Promise.race
-
 ## Async/Await
 
-JavaScript promises give us a nice way to do asynchronous programming in a style that looks very synchronous. This makes building complex programs much easier and familiar to most developers. But could we do better? The caretakers of the JavaScript language have listened to the community and added Async/Await to the language to make asynchronous programming even simpler. This will be our last stop on the journey of promises.
+- Promises gives us asynchronous programming that kinda looks like synchronous
+- Chaining all the `then` is confusing. Not at all like what we started with.
+- The added Async/Await
+
+```JavaScript
+async function justDoIt() {
+  const data = await read();
+}
+```
+
+- add back out data pipeline
+
+```JavaScript
+async function justDoIt() {
+  const data = await read();
+  const string = convertToString(data);
+  const array = stringToArray(string);
+  const uniqueArray = unique(array);
+  const sortedArray = sort(uniqueArray);
+  const savedArray = await save(sortedArray);
+  const outputArray = output(savedArray);
+
+  return outputArray;
+}
+```
+
+- add back a normal try/catch exception handling
+
+```JavaScript
+async function justDoIt() {
+  try {
+    const data = await read();
+    const string = convertToString(data);
+    const array = stringToArray(string);
+    const uniqueArray = unique(array);
+    const sortedArray = sort(uniqueArray);
+    const savedArray = await save(sortedArray);
+    const outputArray = output(savedArray);
+
+    return outputArray;
+  } catch (e) {
+    handleError(e);
+  }
+}
+```
