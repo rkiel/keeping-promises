@@ -463,17 +463,30 @@ function justDoIt(processData) {
 
 ## Writing using a promise
 
-- `fs` has an alternative where the functions return promises instead of using callbacks.
+- In Node 10, `fs` has an alternative where the functions return promises instead of using callbacks.
+
+Node 10
 
 ```JavaScript
 const fs = require("fs").promises;
+```
+
+- In Node 8, you can promisify the individual `fs` functions
+
+```JavaScript
+const util = require("util");
+const writeFile = util.promisify(fs.writeFile);
+const readFile = util.promisify(fs.readFile);
 ```
 
 - remove callback, return promise
 
 ```JavaScript
 function save(array) {
-  const promise = fs.writeFile("saved.txt", array)
+  // Node 8
+  const promise = writeFile("saved.txt", array)
+  // Node 10
+  // const promise = fs.writeFile("saved.txt", array)
   return promise;
 }
 ```
@@ -493,7 +506,10 @@ function writeFileCallback(data) {
 
 ```JavaScript
 function save(array) {
-  const promise = fs.writeFile("saved.txt", array);
+  // Node 8
+  const promise = writeFile("saved.txt", array);
+  // Node 10
+  //const promise = fs.writeFile("saved.txt", array);
   const promise2 = promise.then(writeFileCallback);
   return promise2;
 }
@@ -508,7 +524,10 @@ function save(array) {
     return array;
   }
 
-  const promise = fs.writeFile("saved.txt", array);
+  // Node 8
+  const promise = writeFile("saved.txt", array);
+  // Node 10
+  // const promise = fs.writeFile("saved.txt", array);
   const promise2 = promise.then(writeFileCallback);
   const promise3 = promise2.then(saveCallback);
 
@@ -588,7 +607,10 @@ function justDoIt(processData) {
 
 ```JavaScript
 function read() {
-  const promise = fs.readFile("input.txt");
+  // Node 8
+  const promise = readFile("input.txt");
+  // Node 10
+  // const promise = fs.readFile("input.txt");
   return promise;
 }
 ```
@@ -641,10 +663,15 @@ function save(array) {
     return array;
   }
 
-  return fs
-    .writeFile("saved.txt", array)
+  // Node 8
+  return writeFile("saved.txt", array)
     .then(writeFileCallback)
     .then(saveCallback);
+  // Node 10
+  // return fs
+  //   .writeFile("saved.txt", array)
+  //   .then(writeFileCallback)
+  //   .then(saveCallback);
 }
 ```
 
@@ -652,7 +679,10 @@ function save(array) {
 
 ```JavaScript
 function read() {
-  return fs.readFile("input.txt");
+  // Node 8
+  return readFile("input.txt");
+  // Node 10
+  // return readFile("input.txt");
 }
 ```
 
