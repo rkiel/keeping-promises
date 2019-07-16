@@ -735,3 +735,5 @@ https://www.youtube.com/watch?v=hf1T_AONQJU
 * https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-arrays/
 
 * https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-functions/
+
+* skip part 4
