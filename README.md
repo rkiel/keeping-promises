@@ -125,7 +125,7 @@ function justDoIt(processData) {
 }
 ```
 
-- output is still wrong
+- output is still wrong. [See code](step01.js)
 
 - next transform function, remove first array item
 
@@ -151,7 +151,7 @@ function justDoIt(processData) {
 }
 ```
 
-- We now have an array of words.
+- We now have an array of words. [See code](step02.js)
 
 ## Formatting Output
 
@@ -197,6 +197,8 @@ function justDoIt(processData) {
 }
 ```
 
+[See code](step03.js)
+
 ## Sorting
 
 - now the main event: sorting
@@ -224,6 +226,8 @@ function justDoIt(processData) {
   }
 }
 ```
+
+[See code](step04.js)
 
 ## Uniqueness
 
@@ -275,6 +279,8 @@ function justDoIt(processData) {
 }
 ```
 
+[See code](step05.js)
+
 ## Part 2 -- Asynchronous programming
 
 ## Writing to a file
@@ -316,6 +322,8 @@ function justDoIt(processData) {
   }
 }
 ```
+
+[See code](step06.js)
 
 - every looks good, right?
 - something is wrong
@@ -444,6 +452,8 @@ function justDoIt(processData) {
 }
 ```
 
+[See code](step07.js)
+
 - output is correct
 
 * But at what price?
@@ -556,6 +566,8 @@ function justDoIt(processData) {
 }
 ```
 
+[See code](step08.js)
+
 - promises seem like a big win for us
 - write asynchronous code in a style that has a very synchronous look and feel to it which we are already familiar and comfortable with.
 
@@ -600,6 +612,8 @@ function justDoIt(processData) {
 ```
 
 - any file system errors will be handled
+
+[See code](step09.js)
 
 ## Reading from a file using a promise
 
@@ -653,6 +667,8 @@ function justDoIt() {
 
 - no longer need the try/catch
 
+[See code](step10.js)
+
 ## Promises in the real world
 
 - First, we can re-write `save` and remove all the intermediate variables in favor of method chaining.
@@ -700,6 +716,8 @@ function justDoIt() {
     .catch(handleError);
 }
 ```
+
+[See code](step11.js)
 
 ## Async/Await
 
@@ -749,21 +767,22 @@ async function justDoIt() {
 }
 ```
 
-## Homwork
+[See code](step12.js)
 
-YouTube: Redemption from Callback Hell
-https://www.youtube.com/watch?v=hf1T_AONQJU
+## Homework
 
-- listen to Michael Jackson
-- ignore Domenic Denicola (nothing personal)
-- ignore ES6 Generators
+1. Watch YouTube: ["Redemption from Callback Hell"](https://www.youtube.com/watch?v=hf1T_AONQJU)
 
-* before asycn/await was finalized
+   1. listen to Michael Jackson
+   1. ignore Domenic Denicola (nothing personal; too much in the weeds)
+   1. ignore references to future things such as ES6 Generators
 
-* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-intro/
+1. Read "A GENTLE INTRODUCTION TO FUNCTIONAL JAVASCRIPT"
 
-* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-arrays/
+   1. [Part 1: Building blocks and motivation](https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-intro/)
 
-* https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-functions/
+   1. [Part 2: Working with Arrays and Lists](https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-arrays/)
 
-* skip part 4
+   1. [Part 3: Functions for making functions](https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-functions/)
+
+   1. skip Part 4: Doing it with style
